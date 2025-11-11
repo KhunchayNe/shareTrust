@@ -615,7 +615,7 @@ export default function GroupDetailPage() {
                   • Members: {group.current_members}/{group.max_members}
                 </li>
                 <li>• Payment via Escrow (Protected)</li>
-                <li>• Full refund if group doesn&apos;t reach minimum members</li>
+                <li>• Full refund if group doesn't reach minimum members</li>
               </ul>
             </div>
 
@@ -646,8 +646,8 @@ export default function GroupDetailPage() {
               <ul className="space-y-1 text-sm text-blue-800">
                 <li>• Your payment will be held securely in escrow</li>
                 <li>• Funds are released when group is complete</li>
-                <li>• Auto-refund if group doesn&apos;t fill in time</li>
-                <li>• You&apos;ll receive login credentials once active</li>
+                <li>• Auto-refund if group doesn't fill in time</li>
+                <li>• You'll receive login credentials once active</li>
               </ul>
             </div>
 

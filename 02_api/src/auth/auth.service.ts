@@ -54,23 +54,25 @@ export class AuthService {
       if (existingProfile) {
         // User exists, get their Supabase user record
         userId = existingProfile.id;
-        const { data: user, error } = await this.supabase.auth.admin.getUserById(userId);
+        const { data: user, error } =
+          await this.supabase.auth.admin.getUserById(userId);
         if (error || !user) {
           throw new Error('User not found in Supabase auth');
         }
         userData = { user: user };
       } else {
         // Create new user using admin API
-        const { data: newUser, error: createError } = await this.supabase.auth.admin.createUser({
-          email,
-          email_confirm: true,
-          user_metadata: {
-            line_user_id: lineProfile.userId,
-            display_name: lineProfile.displayName,
-            avatar_url: lineProfile.pictureUrl,
-            provider: 'line',
-          },
-        });
+        const { data: newUser, error: createError } =
+          await this.supabase.auth.admin.createUser({
+            email,
+            email_confirm: true,
+            user_metadata: {
+              line_user_id: lineProfile.userId,
+              display_name: lineProfile.displayName,
+              avatar_url: lineProfile.pictureUrl,
+              provider: 'line',
+            },
+          });
 
         if (createError) {
           throw new Error(`Failed to create user: ${createError.message}`);
@@ -108,7 +110,7 @@ export class AuthService {
         // Generate custom Supabase JWT token
         const supabasePayload = {
           aud: 'authenticated',
-          exp: Math.floor(Date.now() / 1000) + (7 * 24 * 60 * 60), // 7 days
+          exp: Math.floor(Date.now() / 1000) + 7 * 24 * 60 * 60, // 7 days
           sub: userData.user.id,
           email: email,
           role: 'authenticated',
@@ -310,14 +312,21 @@ export class AuthService {
 
   private async exchangeCodeForToken(code: string): Promise<any> {
     try {
-      const lineChannelId = this.configService.get<string>('NEXT_PUBLIC_LINE_CHANNEL_ID');
-      const lineChannelSecret = this.configService.get<string>('LINE_CHANNEL_SECRET');
+      const lineChannelId = this.configService.get<string>(
+        'NEXT_PUBLIC_LINE_CHANNEL_ID',
+      );
+      const lineChannelSecret = this.configService.get<string>(
+        'LINE_CHANNEL_SECRET',
+      );
 
       if (!lineChannelId || !lineChannelSecret) {
         throw new Error('LINE channel credentials not configured');
       }
 
-      const redirectUri = this.configService.get<string>('LINE_LIFF_REDIRECT_URI', 'https://1crzn970-3000.asse.devtunnels.ms/');
+      const redirectUri = this.configService.get<string>(
+        'LINE_LIFF_REDIRECT_URI',
+        'https://1crzn970-3000.asse.devtunnels.ms/',
+      );
 
       const response = await fetch('https://api.line.me/oauth2/v2.1/token', {
         method: 'POST',
@@ -335,7 +344,9 @@ export class AuthService {
       });
 
       if (!response.ok) {
-        throw new Error(`Failed to exchange code for token: ${response.statusText}`);
+        throw new Error(
+          `Failed to exchange code for token: ${response.statusText}`,
+        );
       }
 
       return await response.json();
@@ -349,7 +360,7 @@ export class AuthService {
     try {
       const response = await fetch('https://api.line.me/v2/profile', {
         headers: {
-          'Authorization': `Bearer ${accessToken}`,
+          Authorization: `Bearer ${accessToken}`,
         },
       });
 

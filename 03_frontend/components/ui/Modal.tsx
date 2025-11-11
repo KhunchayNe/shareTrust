@@ -1,18 +1,18 @@
-import React, { useEffect, useRef } from 'react'
-import { createPortal } from 'react-dom'
-import { cn } from '@/lib/utils'
+import React, { useEffect, useRef } from "react";
+import { createPortal } from "react-dom";
+import { cn } from "@/lib/utils";
 
 export interface ModalProps {
-  isOpen: boolean
-  onClose: () => void
-  title?: string
-  description?: string
-  size?: 'sm' | 'md' | 'lg' | 'xl' | 'full'
-  showCloseButton?: boolean
-  closeOnBackdropClick?: boolean
-  closeOnEscape?: boolean
-  className?: string
-  children: React.ReactNode
+  isOpen: boolean;
+  onClose: () => void;
+  title?: string;
+  description?: string;
+  size?: "sm" | "md" | "lg" | "xl" | "full";
+  showCloseButton?: boolean;
+  closeOnBackdropClick?: boolean;
+  closeOnEscape?: boolean;
+  className?: string;
+  children: React.ReactNode;
 }
 
 const Modal: React.FC<ModalProps> = ({
@@ -20,52 +20,52 @@ const Modal: React.FC<ModalProps> = ({
   onClose,
   title,
   description,
-  size = 'md',
+  size = "md",
   showCloseButton = true,
   closeOnBackdropClick = true,
   closeOnEscape = true,
   className,
-  children
+  children,
 }) => {
-  const modalRef = useRef<HTMLDivElement>(null)
+  const modalRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     if (isOpen && closeOnEscape) {
       const handleEscape = (event: KeyboardEvent) => {
-        if (event.key === 'Escape') {
-          onClose()
+        if (event.key === "Escape") {
+          onClose();
         }
-      }
+      };
 
-      document.addEventListener('keydown', handleEscape)
-      return () => document.removeEventListener('keydown', handleEscape)
+      document.addEventListener("keydown", handleEscape);
+      return () => document.removeEventListener("keydown", handleEscape);
     }
-  }, [isOpen, onClose, closeOnEscape])
+  }, [isOpen, onClose, closeOnEscape]);
 
   useEffect(() => {
     if (isOpen) {
-      document.body.style.overflow = 'hidden'
+      document.body.style.overflow = "hidden";
       return () => {
-        document.body.style.overflow = 'unset'
-      }
+        document.body.style.overflow = "unset";
+      };
     }
-  }, [isOpen])
+  }, [isOpen]);
 
   const handleBackdropClick = (e: React.MouseEvent) => {
     if (e.target === e.currentTarget && closeOnBackdropClick) {
-      onClose()
+      onClose();
     }
-  }
+  };
 
   const sizes = {
-    sm: 'max-w-sm',
-    md: 'max-w-md',
-    lg: 'max-w-lg',
-    xl: 'max-w-xl',
-    full: 'max-w-7xl mx-4'
-  }
+    sm: "max-w-sm",
+    md: "max-w-md",
+    lg: "max-w-lg",
+    xl: "max-w-xl",
+    full: "max-w-7xl mx-4",
+  };
 
-  if (!isOpen) return null
+  if (!isOpen) return null;
 
   const modalContent = (
     <div className="fixed inset-0 z-[var(--z-index-modal)] flex items-center justify-center p-4">
@@ -80,27 +80,33 @@ const Modal: React.FC<ModalProps> = ({
       <div
         ref={modalRef}
         className={cn(
-          'relative w-full rounded-2xl bg-white shadow-xl focus:outline-none max-h-[90vh] overflow-hidden',
-          'transform transition-all duration-200 ease-out',
+          "relative w-full rounded-2xl bg-white shadow-xl focus:outline-none max-h-[90vh] overflow-hidden",
+          "transform transition-all duration-200 ease-out",
           sizes[size],
-          className
+          className,
         )}
         role="dialog"
         aria-modal="true"
-        aria-labelledby={title ? 'modal-title' : undefined}
-        aria-describedby={description ? 'modal-description' : undefined}
+        aria-labelledby={title ? "modal-title" : undefined}
+        aria-describedby={description ? "modal-description" : undefined}
       >
         {/* Header */}
         {(title || showCloseButton) && (
           <div className="flex items-center justify-between p-6 border-b border-[rgb(var(--color-border-primary))]">
             <div>
               {title && (
-                <h2 id="modal-title" className="text-xl font-semibold text-[rgb(var(--color-text-primary))]">
+                <h2
+                  id="modal-title"
+                  className="text-xl font-semibold text-[rgb(var(--color-text-primary))]"
+                >
                   {title}
                 </h2>
               )}
               {description && (
-                <p id="modal-description" className="mt-1 text-sm text-[rgb(var(--color-text-secondary))]">
+                <p
+                  id="modal-description"
+                  className="mt-1 text-sm text-[rgb(var(--color-text-secondary))]"
+                >
                   {description}
                 </p>
               )}
@@ -131,22 +137,20 @@ const Modal: React.FC<ModalProps> = ({
         )}
 
         {/* Body */}
-        <div className="flex-1 overflow-y-auto">
-          {children}
-        </div>
+        <div className="flex-1 overflow-y-auto">{children}</div>
       </div>
     </div>
-  )
+  );
 
-  return createPortal(modalContent, document.body)
-}
+  return createPortal(modalContent, document.body);
+};
 
 export interface ModalHeaderProps {
-  title?: string
-  description?: string
-  onClose?: () => void
-  className?: string
-  children?: React.ReactNode
+  title?: string;
+  description?: string;
+  onClose?: () => void;
+  className?: string;
+  children?: React.ReactNode;
 }
 
 export const ModalHeader: React.FC<ModalHeaderProps> = ({
@@ -154,10 +158,15 @@ export const ModalHeader: React.FC<ModalHeaderProps> = ({
   description,
   onClose,
   className,
-  children
+  children,
 }) => {
   return (
-    <div className={cn('flex items-center justify-between p-6 border-b border-[rgb(var(--color-border-primary))]', className)}>
+    <div
+      className={cn(
+        "flex items-center justify-between p-6 border-b border-[rgb(var(--color-border-primary))]",
+        className,
+      )}
+    >
       <div>
         {title && (
           <h2 className="text-xl font-semibold text-[rgb(var(--color-text-primary))]">
@@ -194,34 +203,41 @@ export const ModalHeader: React.FC<ModalHeaderProps> = ({
         </button>
       )}
     </div>
-  )
-}
+  );
+};
 
 export interface ModalBodyProps {
-  className?: string
-  children: React.ReactNode
+  className?: string;
+  children: React.ReactNode;
 }
 
-export const ModalBody: React.FC<ModalBodyProps> = ({ className, children }) => {
-  return (
-    <div className={cn('p-6', className)}>
-      {children}
-    </div>
-  )
-}
+export const ModalBody: React.FC<ModalBodyProps> = ({
+  className,
+  children,
+}) => {
+  return <div className={cn("p-6", className)}>{children}</div>;
+};
 
 export interface ModalFooterProps {
-  className?: string
-  children: React.ReactNode
+  className?: string;
+  children: React.ReactNode;
 }
 
-export const ModalFooter: React.FC<ModalFooterProps> = ({ className, children }) => {
+export const ModalFooter: React.FC<ModalFooterProps> = ({
+  className,
+  children,
+}) => {
   return (
-    <div className={cn('flex items-center justify-end gap-3 p-6 border-t border-[rgb(var(--color-border-primary))]', className)}>
+    <div
+      className={cn(
+        "flex items-center justify-end gap-3 p-6 border-t border-[rgb(var(--color-border-primary))]",
+        className,
+      )}
+    >
       {children}
     </div>
-  )
-}
+  );
+};
 
-export { Modal }
-export default Modal
+export { Modal };
+export default Modal;

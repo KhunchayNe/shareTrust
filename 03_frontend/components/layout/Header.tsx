@@ -1,14 +1,14 @@
-import React from 'react'
-import { Button } from '@/components/ui/Button'
-import { cn } from '@/lib/utils'
+import React from "react";
+import { Button } from "@/components/ui/Button";
+import { cn } from "@/lib/utils";
 
 interface HeaderProps {
-  title?: string
-  actions?: React.ReactNode
-  onBack?: () => void
-  transparent?: boolean
-  sticky?: boolean
-  className?: string
+  title?: string;
+  actions?: React.ReactNode;
+  onBack?: () => void;
+  transparent?: boolean;
+  sticky?: boolean;
+  className?: string;
 }
 
 export const Header: React.FC<HeaderProps> = ({
@@ -17,14 +17,14 @@ export const Header: React.FC<HeaderProps> = ({
   onBack,
   transparent = false,
   sticky = true,
-  className
+  className,
 }) => {
   const headerClasses = cn(
-    'sticky top-0 z-50 flex items-center justify-between px-4 py-3 bg-white border-b border-[rgb(var(--color-border-primary))]',
-    transparent && 'bg-transparent border-transparent',
-    sticky && 'backdrop-blur-md bg-white/95',
-    className
-  )
+    "sticky top-0 z-50 flex items-center justify-between px-4 py-3 bg-white border-b border-[rgb(var(--color-border-primary))]",
+    transparent && "bg-transparent border-transparent",
+    sticky && "backdrop-blur-md bg-white/95",
+    className,
+  );
 
   return (
     <header className={headerClasses}>
@@ -73,11 +73,9 @@ export const Header: React.FC<HeaderProps> = ({
       )}
 
       {/* Right Section - Actions */}
-      <div className="flex items-center space-x-2">
-        {actions}
-      </div>
+      <div className="flex items-center space-x-2">{actions}</div>
     </header>
-  )
-}
+  );
+};
 
-export default Header
+export default Header;

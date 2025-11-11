@@ -1,33 +1,33 @@
-import React, { useState, useEffect } from 'react'
-import { Card, CardBody, CardHeader } from '@/components/ui/Card'
-import { Button } from '@/components/ui/Button'
-import { Badge } from '@/components/ui/Badge'
-import { formatCurrency, generatePaymentReference } from '@/lib/utils'
+import React, { useState, useEffect } from "react";
+import { Card, CardBody, CardHeader } from "@/components/ui/Card";
+import { Button } from "@/components/ui/Button";
+import { Badge } from "@/components/ui/Badge";
+import { formatCurrency, generatePaymentReference } from "@/lib/utils";
 
 interface QRCodePaymentProps {
-  amount: number
-  currency?: string
-  merchantName?: string
-  reference?: string
-  onPaymentComplete?: (reference: string) => void
-  onExpire?: () => void
-  expiresInSeconds?: number
-  className?: string
+  amount: number;
+  currency?: string;
+  merchantName?: string;
+  reference?: string;
+  onPaymentComplete?: (reference: string) => void;
+  onExpire?: () => void;
+  expiresInSeconds?: number;
+  className?: string;
 }
 
 export const QRCodePayment: React.FC<QRCodePaymentProps> = ({
   amount,
-  currency = 'THB',
-  merchantName = 'ShareTrust',
+  currency = "THB",
+  merchantName = "ShareTrust",
   reference = generatePaymentReference(),
   onPaymentComplete,
   onExpire,
   expiresInSeconds = 900, // 15 minutes default
-  className
+  className,
 }) => {
-  const [timeRemaining, setTimeRemaining] = useState(expiresInSeconds)
-  const [expired, setExpired] = useState(false)
-  const [copiedReference, setCopiedReference] = useState(false)
+  const [timeRemaining, setTimeRemaining] = useState(expiresInSeconds);
+  const [expired, setExpired] = useState(false);
+  const [copiedReference, setCopiedReference] = useState(false);
 
   useEffect(() => {
     if (timeRemaining <= 0 && !expired) {
@@ -39,32 +39,32 @@ export const QRCodePayment: React.FC<QRCodePaymentProps> = ({
     }
 
     const timer = setInterval(() => {
-      setTimeRemaining(prev => Math.max(0, prev - 1))
-    }, 1000)
+      setTimeRemaining((prev) => Math.max(0, prev - 1));
+    }, 1000);
 
-    return () => clearInterval(timer)
-  }, [timeRemaining, expired, onExpire])
+    return () => clearInterval(timer);
+  }, [timeRemaining, expired, onExpire]);
 
   const formatTime = (seconds: number): string => {
-    const minutes = Math.floor(seconds / 60)
-    const remainingSeconds = seconds % 60
-    return `${minutes}:${remainingSeconds.toString().padStart(2, '0')}`
-  }
+    const minutes = Math.floor(seconds / 60);
+    const remainingSeconds = seconds % 60;
+    return `${minutes}:${remainingSeconds.toString().padStart(2, "0")}`;
+  };
 
   const copyReference = async () => {
     try {
-      await navigator.clipboard.writeText(reference)
-      setCopiedReference(true)
-      setTimeout(() => setCopiedReference(false), 2000)
+      await navigator.clipboard.writeText(reference);
+      setCopiedReference(true);
+      setTimeout(() => setCopiedReference(false), 2000);
     } catch (error) {
-      console.error('Failed to copy reference:', error)
+      console.error("Failed to copy reference:", error);
     }
-  }
+  };
 
   const generatePromptPayQR = () => {
     // This is a simulated QR code for demo purposes
     // In production, this would generate a real PromptPay QR code
-    const qrData = `00020101021229370016A00000067701011101130066${merchantName.replace(/\s+/g, '').toUpperCase()}520450005303764540${amount}5802TH53037646204${reference}6304`
+    const qrData = `00020101021229370016A00000067701011101130066${merchantName.replace(/\s+/g, "").toUpperCase()}520450005303764540${amount}5802TH53037646204${reference}6304`;
 
     // Return a placeholder data URL - in production, use a QR code library
     return `data:image/svg+xml;base64,${btoa(`
@@ -82,10 +82,10 @@ export const QRCodePayment: React.FC<QRCodePaymentProps> = ({
         <rect x="50" y="130" width="20" height="20" fill="black"/>
         <text x="100" y="105" text-anchor="middle" font-size="8" fill="black">${reference}</text>
       </svg>
-    `)}`
-  }
+    `)}`;
+  };
 
-  const isExpiringSoon = timeRemaining <= 60 && timeRemaining > 0
+  const isExpiringSoon = timeRemaining <= 60 && timeRemaining > 0;
 
   return (
     <Card className={className}>
@@ -103,13 +103,15 @@ export const QRCodePayment: React.FC<QRCodePaymentProps> = ({
       <CardBody className="space-y-4">
         {/* QR Code */}
         <div className="flex justify-center">
-          <div className={`relative p-4 bg-white rounded-lg border-2 ${
-            expired
-              ? 'border-[rgb(var(--color-danger))] opacity-50'
-              : isExpiringSoon
-                ? 'border-[rgb(var(--color-warning))] animate-pulse'
-                : 'border-[rgb(var(--color-border-primary))]'
-          }`}>
+          <div
+            className={`relative p-4 bg-white rounded-lg border-2 ${
+              expired
+                ? "border-[rgb(var(--color-danger))] opacity-50"
+                : isExpiringSoon
+                  ? "border-[rgb(var(--color-warning))] animate-pulse"
+                  : "border-[rgb(var(--color-border-primary))]"
+            }`}
+          >
             {/* QR Code Placeholder */}
             <div className="w-48 h-48 bg-[rgb(var(--color-bg-secondary))] rounded-lg flex items-center justify-center">
               <div className="text-center">
@@ -182,7 +184,7 @@ export const QRCodePayment: React.FC<QRCodePaymentProps> = ({
               size="xs"
               className="h-6 px-2"
             >
-              {copiedReference ? '✓ Copied' : '📋 Copy'}
+              {copiedReference ? "✓ Copied" : "📋 Copy"}
             </Button>
           </div>
           <code className="text-sm font-mono text-[rgb(var(--color-text-primary))] break-all">
@@ -193,20 +195,24 @@ export const QRCodePayment: React.FC<QRCodePaymentProps> = ({
         {/* Timer */}
         <div className="flex items-center justify-center">
           <Badge
-            variant={expired ? 'danger' : isExpiringSoon ? 'warning' : 'default'}
+            variant={
+              expired ? "danger" : isExpiringSoon ? "warning" : "default"
+            }
             size="sm"
             className="px-3 py-1"
           >
-            {expired ? '⏰ Expired' : `⏱️ ${formatTime(timeRemaining)}`}
+            {expired ? "⏰ Expired" : `⏱️ ${formatTime(timeRemaining)}`}
           </Badge>
         </div>
 
         {/* Instructions */}
         <div className="space-y-2 text-sm text-[rgb(var(--color-text-secondary))]">
-          <p className="font-medium text-[rgb(var(--color-text-primary))]">How to pay:</p>
+          <p className="font-medium text-[rgb(var(--color-text-primary))]">
+            How to pay:
+          </p>
           <ol className="space-y-1 text-xs">
             <li>1. Open your mobile banking app</li>
-            <li>2. Select &ldquo;Scan QR&rdquo; or &ldquo;Pay with QR&rdquo;</li>
+            <li>2. Select "Scan QR" or "Pay with QR"</li>
             <li>3. Scan the QR code above</li>
             <li>4. Confirm the payment details</li>
             <li>5. Complete the payment</li>
@@ -216,24 +222,20 @@ export const QRCodePayment: React.FC<QRCodePaymentProps> = ({
         {/* Action Buttons */}
         <div className="flex space-x-2">
           <Button
-            onClick={() => window.open(generatePromptPayQR(), '_blank')}
+            onClick={() => window.open(generatePromptPayQR(), "_blank")}
             variant="outline"
             size="sm"
             className="flex-1"
           >
             📱 Open in Banking App
           </Button>
-          <Button
-            onClick={copyReference}
-            variant="ghost"
-            size="sm"
-          >
+          <Button onClick={copyReference} variant="ghost" size="sm">
             📋 Copy Ref
           </Button>
         </div>
       </CardBody>
     </Card>
-  )
-}
+  );
+};
 
-export default QRCodePayment
+export default QRCodePayment;

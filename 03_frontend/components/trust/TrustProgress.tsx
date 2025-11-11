@@ -1,15 +1,19 @@
-import React from 'react'
-import { Badge } from '@/components/ui/Badge'
-import { formatTrustScore, getTrustLevelColor, calculateEscrowProgress } from '@/lib/utils'
+import React from "react";
+import { Badge } from "@/components/ui/Badge";
+import {
+  formatTrustScore,
+  getTrustLevelColor,
+  calculateEscrowProgress,
+} from "@/lib/utils";
 
 interface TrustProgressProps {
-  currentScore: number
-  targetScore?: number
-  showCurrentLevel?: boolean
-  showNextLevel?: boolean
-  animated?: boolean
-  size?: 'sm' | 'md' | 'lg'
-  className?: string
+  currentScore: number;
+  targetScore?: number;
+  showCurrentLevel?: boolean;
+  showNextLevel?: boolean;
+  animated?: boolean;
+  size?: "sm" | "md" | "lg";
+  className?: string;
 }
 
 export const TrustProgress: React.FC<TrustProgressProps> = ({
@@ -18,30 +22,33 @@ export const TrustProgress: React.FC<TrustProgressProps> = ({
   showCurrentLevel = true,
   showNextLevel = true,
   animated = true,
-  size = 'md',
-  className
+  size = "md",
+  className,
 }) => {
-  const { level, levelName } = formatTrustScore(currentScore)
-  const nextLevel = Math.min(level + 1, 5)
-  const nextLevelName = formatTrustScore(nextLevel * 20).levelName
-  const currentLevelThreshold = (level - 1) * 20
-  const nextLevelThreshold = level * 20
-  const progress = calculateEscrowProgress(currentScore - currentLevelThreshold, nextLevelThreshold - currentLevelThreshold)
+  const { level, levelName } = formatTrustScore(currentScore);
+  const nextLevel = Math.min(level + 1, 5);
+  const nextLevelName = formatTrustScore(nextLevel * 20).levelName;
+  const currentLevelThreshold = (level - 1) * 20;
+  const nextLevelThreshold = level * 20;
+  const progress = calculateEscrowProgress(
+    currentScore - currentLevelThreshold,
+    nextLevelThreshold - currentLevelThreshold,
+  );
 
   const sizes = {
     sm: {
-      height: 'h-2',
-      text: 'text-xs'
+      height: "h-2",
+      text: "text-xs",
     },
     md: {
-      height: 'h-3',
-      text: 'text-sm'
+      height: "h-3",
+      text: "text-sm",
     },
     lg: {
-      height: 'h-4',
-      text: 'text-base'
-    }
-  }
+      height: "h-4",
+      text: "text-base",
+    },
+  };
 
   return (
     <div className={`space-y-3 ${className}`}>
@@ -51,7 +58,9 @@ export const TrustProgress: React.FC<TrustProgressProps> = ({
           {showCurrentLevel && (
             <div className="flex items-center space-x-2">
               <Badge variant="trust" level={level} size="xs" rounded />
-              <span className={`${sizes[size].text} font-medium text-[rgb(var(--color-text-primary))]`}>
+              <span
+                className={`${sizes[size].text} font-medium text-[rgb(var(--color-text-primary))]`}
+              >
                 {levelName}
               </span>
             </div>
@@ -59,11 +68,15 @@ export const TrustProgress: React.FC<TrustProgressProps> = ({
         </div>
 
         <div className="flex items-center space-x-2">
-          <span className={`${sizes[size].text} text-[rgb(var(--color-text-secondary))]`}>
+          <span
+            className={`${sizes[size].text} text-[rgb(var(--color-text-secondary))]`}
+          >
             {currentScore} pts
           </span>
           {showNextLevel && level < 5 && (
-            <span className={`${sizes[size].text} text-[rgb(var(--color-text-tertiary))]`}>
+            <span
+              className={`${sizes[size].text} text-[rgb(var(--color-text-tertiary))]`}
+            >
               / {nextLevelThreshold}
             </span>
           )}
@@ -80,11 +93,11 @@ export const TrustProgress: React.FC<TrustProgressProps> = ({
             {/* Progress */}
             <div
               className={`h-full transition-all duration-500 ease-out rounded-full ${
-                animated ? 'animate-pulse' : ''
+                animated ? "animate-pulse" : ""
               }`}
               style={{
                 width: `${progress}%`,
-                backgroundColor: getTrustLevelColor(level)
+                backgroundColor: getTrustLevelColor(level),
               }}
             />
           </div>
@@ -105,10 +118,14 @@ export const TrustProgress: React.FC<TrustProgressProps> = ({
       {/* Next Level Info */}
       {showNextLevel && level < 5 && (
         <div className="flex items-center justify-between">
-          <span className={`${sizes[size].text} text-[rgb(var(--color-text-tertiary))]`}>
+          <span
+            className={`${sizes[size].text} text-[rgb(var(--color-text-tertiary))]`}
+          >
             Next: {nextLevelName}
           </span>
-          <span className={`${sizes[size].text} text-[rgb(var(--color-text-tertiary))]`}>
+          <span
+            className={`${sizes[size].text} text-[rgb(var(--color-text-tertiary))]`}
+          >
             {nextLevelThreshold - currentScore} pts to go
           </span>
         </div>
@@ -117,7 +134,12 @@ export const TrustProgress: React.FC<TrustProgressProps> = ({
       {/* Max Level */}
       {level >= 5 && (
         <div className="text-center">
-          <Badge variant="trust" level={5} size="sm" className="animate-trust-glow">
+          <Badge
+            variant="trust"
+            level={5}
+            size="sm"
+            className="animate-trust-glow"
+          >
             🏆 Maximum Trust Level Reached!
           </Badge>
         </div>
@@ -127,28 +149,36 @@ export const TrustProgress: React.FC<TrustProgressProps> = ({
       {targetScore && targetScore > currentScore && (
         <div className="mt-4 p-3 bg-[rgb(var(--color-bg-secondary))] rounded-lg">
           <div className="flex items-center justify-between mb-2">
-            <span className={`${sizes[size].text} font-medium text-[rgb(var(--color-text-secondary))]`}>
+            <span
+              className={`${sizes[size].text} font-medium text-[rgb(var(--color-text-secondary))]`}
+            >
               Target Score Progress
             </span>
-            <span className={`${sizes[size].text} text-[rgb(var(--color-text-tertiary))]`}>
+            <span
+              className={`${sizes[size].text} text-[rgb(var(--color-text-tertiary))]`}
+            >
               {currentScore} / {targetScore}
             </span>
           </div>
-          <div className={`w-full ${sizes[size].height} bg-white rounded-full overflow-hidden`}>
+          <div
+            className={`w-full ${sizes[size].height} bg-white rounded-full overflow-hidden`}
+          >
             <div
               className="h-full bg-gradient-to-r from-[rgb(var(--color-brand-primary))] to-[rgb(var(--color-brand-secondary))] transition-all duration-500 ease-out rounded-full"
               style={{
-                width: `${(currentScore / targetScore) * 100}%`
+                width: `${(currentScore / targetScore) * 100}%`,
               }}
             />
           </div>
-          <p className={`mt-1 ${sizes[size].text} text-[rgb(var(--color-text-tertiary))]`}>
+          <p
+            className={`mt-1 ${sizes[size].text} text-[rgb(var(--color-text-tertiary))]`}
+          >
             {targetScore - currentScore} points remaining
           </p>
         </div>
       )}
     </div>
-  )
-}
+  );
+};
 
-export default TrustProgress
+export default TrustProgress;

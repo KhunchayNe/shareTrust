@@ -1,64 +1,64 @@
-import React from 'react'
-import { Badge } from '@/components/ui/Badge'
-import { formatTrustScore, getTrustLevelColor } from '@/lib/utils'
+import React from "react";
+import { Badge } from "@/components/ui/Badge";
+import { formatTrustScore, getTrustLevelColor } from "@/lib/utils";
 
 interface TrustBadgeProps {
-  score: number
-  size?: 'xs' | 'sm' | 'md' | 'lg'
-  variant?: 'default' | 'compact' | 'detailed'
-  showLevel?: boolean
-  showScore?: boolean
-  className?: string
-  animated?: boolean
+  score: number;
+  size?: "xs" | "sm" | "md" | "lg";
+  variant?: "default" | "compact" | "detailed";
+  showLevel?: boolean;
+  showScore?: boolean;
+  className?: string;
+  animated?: boolean;
 }
 
 export const TrustBadge: React.FC<TrustBadgeProps> = ({
   score,
-  size = 'sm',
-  variant = 'default',
+  size = "sm",
+  variant = "default",
   showLevel = true,
   showScore = true,
   className,
-  animated = false
+  animated = false,
 }) => {
-  const { level, levelName } = formatTrustScore(score)
-  const trustColor = getTrustLevelColor(level)
+  const { level, levelName } = formatTrustScore(score);
+  const trustColor = getTrustLevelColor(level);
 
   const getTrustIcon = (level: number) => {
     switch (level) {
       case 1:
-        return '🌱'
+        return "🌱";
       case 2:
-        return '🌿'
+        return "🌿";
       case 3:
-        return '🌳'
+        return "🌳";
       case 4:
-        return '🌟'
+        return "🌟";
       case 5:
-        return '👑'
+        return "👑";
       default:
-        return '❓'
+        return "❓";
     }
-  }
+  };
 
   const getTrustEmoji = (level: number) => {
     switch (level) {
       case 1:
-        return 'New'
+        return "New";
       case 2:
-        return 'Rising'
+        return "Rising";
       case 3:
-        return 'Established'
+        return "Established";
       case 4:
-        return 'Trusted'
+        return "Trusted";
       case 5:
-        return 'Elite'
+        return "Elite";
       default:
-        return 'Unknown'
+        return "Unknown";
     }
-  }
+  };
 
-  if (variant === 'compact') {
+  if (variant === "compact") {
     return (
       <Badge
         variant="trust"
@@ -69,15 +69,15 @@ export const TrustBadge: React.FC<TrustBadgeProps> = ({
       >
         {getTrustIcon(level)}
       </Badge>
-    )
+    );
   }
 
-  if (variant === 'detailed') {
+  if (variant === "detailed") {
     return (
       <div
         className={`inline-flex items-center space-x-2 px-3 py-2 rounded-xl border border-[rgb(var(--color-border-primary))] bg-white ${className}`}
         style={{
-          boxShadow: animated ? '0 0 20px rgba(0, 195, 0, 0.2)' : undefined
+          boxShadow: animated ? "0 0 20px rgba(0, 195, 0, 0.2)" : undefined,
         }}
       >
         {/* Trust Icon */}
@@ -117,13 +117,14 @@ export const TrustBadge: React.FC<TrustBadgeProps> = ({
               key={l}
               className="w-1 h-3 rounded-full"
               style={{
-                backgroundColor: l <= level ? trustColor : 'rgb(var(--color-bg-secondary))'
+                backgroundColor:
+                  l <= level ? trustColor : "rgb(var(--color-bg-secondary))",
               }}
             />
           ))}
         </div>
       </div>
-    )
+    );
   }
 
   return (
@@ -136,15 +137,11 @@ export const TrustBadge: React.FC<TrustBadgeProps> = ({
     >
       <span className="flex items-center space-x-1">
         <span>{getTrustIcon(level)}</span>
-        {showLevel && (
-          <span>{levelName}</span>
-        )}
-        {showScore && (
-          <span className="text-xs">({score})</span>
-        )}
+        {showLevel && <span>{levelName}</span>}
+        {showScore && <span className="text-xs">({score})</span>}
       </span>
     </Badge>
-  )
-}
+  );
+};
 
-export default TrustBadge
+export default TrustBadge;

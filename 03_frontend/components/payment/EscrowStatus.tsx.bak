@@ -180,7 +180,7 @@ export const EscrowStatus: React.FC<EscrowStatusProps> = ({
             <div className="p-3 bg-[rgb(var(--color-warning))]/10 border border-[rgb(var(--color-warning))]/20 rounded-lg">
               <p className="text-sm text-[rgb(var(--color-warning))]">
                 ⏰ Waiting for {requiredMembers - currentMembers} more member(s)
-                to join. If the target isn&apos;t met by the deadline, all payments
+                to join. If the target isn't met by the deadline, all payments
                 will be automatically refunded.
               </p>
             </div>

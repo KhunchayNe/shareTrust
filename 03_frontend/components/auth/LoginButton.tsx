@@ -1,15 +1,15 @@
-import React, { useState } from 'react'
-import { Button } from '@/components/ui/Button'
-import { LoadingSpinner } from '@/components/ui/LoadingSpinner'
+import React, { useState } from "react";
+import { Button } from "@/components/ui/Button";
+import { LoadingSpinner } from "@/components/ui/LoadingSpinner";
 
 interface LoginButtonProps {
-  onLogin: () => Promise<void>
-  loading?: boolean
-  disabled?: boolean
-  className?: string
-  variant?: 'primary' | 'secondary' | 'outline'
-  size?: 'sm' | 'md' | 'lg'
-  fullWidth?: boolean
+  onLogin: () => Promise<void>;
+  loading?: boolean;
+  disabled?: boolean;
+  className?: string;
+  variant?: "primary" | "secondary" | "outline";
+  size?: "sm" | "md" | "lg";
+  fullWidth?: boolean;
 }
 
 export const LoginButton: React.FC<LoginButtonProps> = ({
@@ -17,24 +17,24 @@ export const LoginButton: React.FC<LoginButtonProps> = ({
   loading = false,
   disabled = false,
   className,
-  variant = 'primary',
-  size = 'md',
-  fullWidth = true
+  variant = "primary",
+  size = "md",
+  fullWidth = true,
 }) => {
-  const [isLoggingIn, setIsLoggingIn] = useState(false)
+  const [isLoggingIn, setIsLoggingIn] = useState(false);
 
   const handleLogin = async () => {
-    if (isLoggingIn || loading || disabled) return
+    if (isLoggingIn || loading || disabled) return;
 
     try {
-      setIsLoggingIn(true)
-      await onLogin()
+      setIsLoggingIn(true);
+      await onLogin();
     } catch (error) {
-      console.error('Login failed:', error)
+      console.error("Login failed:", error);
     } finally {
-      setIsLoggingIn(false)
+      setIsLoggingIn(false);
     }
-  }
+  };
 
   return (
     <Button
@@ -84,9 +84,9 @@ export const LoginButton: React.FC<LoginButtonProps> = ({
         ) : undefined
       }
     >
-      {isLoggingIn ? 'Connecting to LINE...' : 'Login with LINE'}
+      {isLoggingIn ? "Connecting to LINE..." : "Login with LINE"}
     </Button>
-  )
-}
+  );
+};
 
-export default LoginButton
+export default LoginButton;

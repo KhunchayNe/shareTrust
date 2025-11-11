@@ -1,15 +1,19 @@
-import React from 'react'
-import { Card, CardBody } from '@/components/ui/Card'
-import { Badge } from '@/components/ui/Badge'
-import { formatTrustScore, getTrustLevelColor, formatDateRelative } from '@/lib/utils'
-import type { User } from '@/types'
+import React from "react";
+import { Card, CardBody } from "@/components/ui/Card";
+import { Badge } from "@/components/ui/Badge";
+import {
+  formatTrustScore,
+  getTrustLevelColor,
+  formatDateRelative,
+} from "@/lib/utils";
+import type { User } from "@/types";
 
 interface UserProfileProps {
-  user: User
-  className?: string
-  showBadges?: boolean
-  showLevelProgress?: boolean
-  size?: 'sm' | 'md' | 'lg'
+  user: User;
+  className?: string;
+  showBadges?: boolean;
+  showLevelProgress?: boolean;
+  size?: "sm" | "md" | "lg";
 }
 
 export const UserProfile: React.FC<UserProfileProps> = ({
@@ -17,18 +21,18 @@ export const UserProfile: React.FC<UserProfileProps> = ({
   className,
   showBadges = true,
   showLevelProgress = true,
-  size = 'md'
+  size = "md",
 }) => {
-  const { level, levelName } = formatTrustScore(user.trust_score || 0)
-  const trustColor = getTrustLevelColor(level)
-  const nextLevelScore = level * 20
-  const progress = ((user.trust_score || 0) % 20) * 5
+  const { level, levelName } = formatTrustScore(user.trust_score || 0);
+  const trustColor = getTrustLevelColor(level);
+  const nextLevelScore = level * 20;
+  const progress = ((user.trust_score || 0) % 20) * 5;
 
   const sizes = {
-    sm: 'h-12 w-12 text-lg',
-    md: 'h-16 w-16 text-xl',
-    lg: 'h-20 w-20 text-2xl'
-  }
+    sm: "h-12 w-12 text-lg",
+    md: "h-16 w-16 text-xl",
+    lg: "h-20 w-20 text-2xl",
+  };
 
   return (
     <Card className={className} variant="outlined" padding="md">
@@ -39,11 +43,13 @@ export const UserProfile: React.FC<UserProfileProps> = ({
             <img
               className={`${sizes[size]} rounded-full object-cover border-2 border-[rgb(var(--color-border-primary))]`}
               src={user.picture_url}
-              alt={user.display_name || 'User avatar'}
+              alt={user.display_name || "User avatar"}
             />
           ) : (
-            <div className={`${sizes[size]} rounded-full bg-[rgb(var(--color-bg-secondary))] flex items-center justify-center text-[rgb(var(--color-text-secondary))] font-semibold border-2 border-[rgb(var(--color-border-primary))]`}>
-              {(user.display_name || 'User').charAt(0).toUpperCase()}
+            <div
+              className={`${sizes[size]} rounded-full bg-[rgb(var(--color-bg-secondary))] flex items-center justify-center text-[rgb(var(--color-text-secondary))] font-semibold border-2 border-[rgb(var(--color-border-primary))]`}
+            >
+              {(user.display_name || "User").charAt(0).toUpperCase()}
             </div>
           )}
         </div>
@@ -53,7 +59,7 @@ export const UserProfile: React.FC<UserProfileProps> = ({
           {/* Name and Trust Level */}
           <div className="flex items-center space-x-2 mb-1">
             <h3 className="font-semibold text-[rgb(var(--color-text-primary))] truncate">
-              {user.display_name || 'Anonymous User'}
+              {user.display_name || "Anonymous User"}
             </h3>
             <Badge
               variant="trust"
@@ -80,7 +86,7 @@ export const UserProfile: React.FC<UserProfileProps> = ({
                         className="h-full transition-all duration-500 ease-out"
                         style={{
                           width: `${progress}%`,
-                          backgroundColor: trustColor
+                          backgroundColor: trustColor,
                         }}
                       />
                     </div>
@@ -105,7 +111,7 @@ export const UserProfile: React.FC<UserProfileProps> = ({
                 🔒 Trusted 50+
               </Badge>
             )}
-            {user.status === 'active' && (
+            {user.status === "active" && (
               <Badge variant="info" size="xs" rounded>
                 🟢 Active
               </Badge>
@@ -137,23 +143,23 @@ export const UserProfile: React.FC<UserProfileProps> = ({
         </div>
       </CardBody>
     </Card>
-  )
-}
+  );
+};
 
 export interface UserProfileCompactProps {
-  user: User
-  className?: string
-  showTrustLevel?: boolean
-  onClick?: () => void
+  user: User;
+  className?: string;
+  showTrustLevel?: boolean;
+  onClick?: () => void;
 }
 
 export const UserProfileCompact: React.FC<UserProfileCompactProps> = ({
   user,
   className,
   showTrustLevel = true,
-  onClick
+  onClick,
 }) => {
-  const { level } = formatTrustScore(user.trust_score || 0)
+  const { level } = formatTrustScore(user.trust_score || 0);
 
   return (
     <div
@@ -166,11 +172,11 @@ export const UserProfileCompact: React.FC<UserProfileCompactProps> = ({
           <img
             className="h-8 w-8 rounded-full object-cover"
             src={user.picture_url}
-            alt={user.display_name || 'User avatar'}
+            alt={user.display_name || "User avatar"}
           />
         ) : (
           <div className="h-8 w-8 rounded-full bg-[rgb(var(--color-bg-secondary))] flex items-center justify-center text-[rgb(var(--color-text-secondary))] text-sm font-semibold">
-            {(user.display_name || 'User').charAt(0).toUpperCase()}
+            {(user.display_name || "User").charAt(0).toUpperCase()}
           </div>
         )}
       </div>
@@ -179,7 +185,7 @@ export const UserProfileCompact: React.FC<UserProfileCompactProps> = ({
       <div className="flex-1 min-w-0">
         <div className="flex items-center space-x-2">
           <span className="text-sm font-medium text-[rgb(var(--color-text-primary))] truncate">
-            {user.display_name || 'Anonymous User'}
+            {user.display_name || "Anonymous User"}
           </span>
           {showTrustLevel && (
             <Badge variant="trust" level={level} size="xs" rounded />
@@ -192,6 +198,5 @@ export const UserProfileCompact: React.FC<UserProfileCompactProps> = ({
         )}
       </div>
     </div>
-  )
-}
-
+  );
+};

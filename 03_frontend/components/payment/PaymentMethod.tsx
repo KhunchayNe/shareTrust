@@ -1,14 +1,14 @@
-import React from 'react'
-import { Card, CardBody } from '@/components/ui/Card'
-import { Badge } from '@/components/ui/Badge'
+import React from "react";
+import { Card, CardBody } from "@/components/ui/Card";
+import { Badge } from "@/components/ui/Badge";
 
 interface PaymentMethodProps {
-  method: 'promptpay' | 'stripe' | 'paypal' | 'bank_transfer'
-  selected?: boolean
-  onSelect?: () => void
-  disabled?: boolean
-  className?: string
-  variant?: 'default' | 'compact' | 'detailed'
+  method: "promptpay" | "stripe" | "paypal" | "bank_transfer";
+  selected?: boolean;
+  onSelect?: () => void;
+  disabled?: boolean;
+  className?: string;
+  variant?: "default" | "compact" | "detailed";
 }
 
 export const PaymentMethod: React.FC<PaymentMethodProps> = ({
@@ -17,75 +17,73 @@ export const PaymentMethod: React.FC<PaymentMethodProps> = ({
   onSelect,
   disabled = false,
   className,
-  variant = 'default'
+  variant = "default",
 }) => {
   const getMethodInfo = (method: string) => {
     switch (method) {
-      case 'promptpay':
+      case "promptpay":
         return {
-          name: 'PromptPay',
-          icon: '🇹🇭',
-          description: 'Thai QR payment system',
-          color: 'rgb(var(--color-success))',
-          badge: 'Popular',
-          features: ['Instant transfer', 'No fees', 'Mobile banking']
-        }
-      case 'stripe':
+          name: "PromptPay",
+          icon: "🇹🇭",
+          description: "Thai QR payment system",
+          color: "rgb(var(--color-success))",
+          badge: "Popular",
+          features: ["Instant transfer", "No fees", "Mobile banking"],
+        };
+      case "stripe":
         return {
-          name: 'Stripe',
-          icon: '💳',
-          description: 'Credit/Debit cards',
-          color: 'rgb(var(--color-brand-secondary))',
-          badge: 'Secure',
-          features: ['Visa/Mastercard', 'International', 'Buyer protection']
-        }
-      case 'paypal':
+          name: "Stripe",
+          icon: "💳",
+          description: "Credit/Debit cards",
+          color: "rgb(var(--color-brand-secondary))",
+          badge: "Secure",
+          features: ["Visa/Mastercard", "International", "Buyer protection"],
+        };
+      case "paypal":
         return {
-          name: 'PayPal',
-          icon: '💰',
-          description: 'Digital wallet',
-          color: 'rgb(var(--color-info))',
-          badge: 'Global',
-          features: ['Buyer protection', 'Easy refunds', 'Multi-currency']
-        }
-      case 'bank_transfer':
+          name: "PayPal",
+          icon: "💰",
+          description: "Digital wallet",
+          color: "rgb(var(--color-info))",
+          badge: "Global",
+          features: ["Buyer protection", "Easy refunds", "Multi-currency"],
+        };
+      case "bank_transfer":
         return {
-          name: 'Bank Transfer',
-          icon: '🏦',
-          description: 'Direct bank payment',
-          color: 'rgb(var(--color-text-secondary))',
-          badge: 'Traditional',
-          features: ['All banks', 'Trackable', 'Manual process']
-        }
+          name: "Bank Transfer",
+          icon: "🏦",
+          description: "Direct bank payment",
+          color: "rgb(var(--color-text-secondary))",
+          badge: "Traditional",
+          features: ["All banks", "Trackable", "Manual process"],
+        };
       default:
         return {
-          name: 'Unknown',
-          icon: '❓',
-          description: 'Unknown payment method',
-          color: 'rgb(var(--color-text-secondary))',
-          badge: 'Unknown',
-          features: []
-        }
+          name: "Unknown",
+          icon: "❓",
+          description: "Unknown payment method",
+          color: "rgb(var(--color-text-secondary))",
+          badge: "Unknown",
+          features: [],
+        };
     }
-  }
+  };
 
-  const info = getMethodInfo(method)
+  const info = getMethodInfo(method);
 
-  if (variant === 'compact') {
+  if (variant === "compact") {
     return (
       <button
         onClick={onSelect}
         disabled={disabled}
         className={`w-full p-3 rounded-lg border-2 transition-all duration-200 text-left ${
           selected
-            ? 'border-[rgb(var(--color-brand-primary))] bg-[rgb(var(--color-brand-primary))]/5'
-            : 'border-[rgb(var(--color-border-primary))] hover:border-[rgb(var(--color-border-secondary))]'
-        } ${disabled ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer'} ${className}`}
+            ? "border-[rgb(var(--color-brand-primary))] bg-[rgb(var(--color-brand-primary))]/5"
+            : "border-[rgb(var(--color-border-primary))] hover:border-[rgb(var(--color-border-secondary))]"
+        } ${disabled ? "opacity-50 cursor-not-allowed" : "cursor-pointer"} ${className}`}
       >
         <div className="flex items-center space-x-3">
-          <div className="text-2xl flex-shrink-0">
-            {info.icon}
-          </div>
+          <div className="text-2xl flex-shrink-0">{info.icon}</div>
           <div className="flex-1 min-w-0">
             <div className="flex items-center space-x-2">
               <span className="font-medium text-[rgb(var(--color-text-primary))] truncate">
@@ -103,8 +101,8 @@ export const PaymentMethod: React.FC<PaymentMethodProps> = ({
             <div
               className={`w-4 h-4 rounded-full border-2 ${
                 selected
-                  ? 'border-[rgb(var(--color-brand-primary))] bg-[rgb(var(--color-brand-primary))]'
-                  : 'border-[rgb(var(--color-border-primary))] bg-white'
+                  ? "border-[rgb(var(--color-brand-primary))] bg-[rgb(var(--color-brand-primary))]"
+                  : "border-[rgb(var(--color-border-primary))] bg-white"
               }`}
             >
               {selected && (
@@ -124,23 +122,21 @@ export const PaymentMethod: React.FC<PaymentMethodProps> = ({
           </div>
         </div>
       </button>
-    )
+    );
   }
 
-  if (variant === 'detailed') {
+  if (variant === "detailed") {
     return (
       <Card
         className={className}
-        variant={selected ? 'elevated' : 'default'}
+        variant={selected ? "elevated" : "default"}
         hover
         clickable={!disabled}
         onClick={onSelect}
       >
         <CardBody className="p-4">
           <div className="flex items-start space-x-4">
-            <div className="text-3xl flex-shrink-0">
-              {info.icon}
-            </div>
+            <div className="text-3xl flex-shrink-0">{info.icon}</div>
 
             <div className="flex-1 min-w-0">
               <div className="flex items-center space-x-2 mb-2">
@@ -177,16 +173,16 @@ export const PaymentMethod: React.FC<PaymentMethodProps> = ({
           </div>
         </CardBody>
       </Card>
-    )
+    );
   }
 
   return (
     <div
       className={`relative rounded-xl border-2 transition-all duration-200 ${
         selected
-          ? 'border-[rgb(var(--color-brand-primary))] bg-[rgb(var(--color-brand-primary))]/5'
-          : 'border-[rgb(var(--color-border-primary))]'
-      } ${disabled ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer hover:border-[rgb(var(--color-border-secondary))]'} ${className}`}
+          ? "border-[rgb(var(--color-brand-primary))] bg-[rgb(var(--color-brand-primary))]/5"
+          : "border-[rgb(var(--color-border-primary))]"
+      } ${disabled ? "opacity-50 cursor-not-allowed" : "cursor-pointer hover:border-[rgb(var(--color-border-secondary))]"} ${className}`}
       onClick={!disabled ? onSelect : undefined}
     >
       <div className="p-4">
@@ -204,8 +200,8 @@ export const PaymentMethod: React.FC<PaymentMethodProps> = ({
           <div
             className={`w-5 h-5 rounded-full border-2 ${
               selected
-                ? 'border-[rgb(var(--color-brand-primary))] bg-[rgb(var(--color-brand-primary))]'
-                : 'border-[rgb(var(--color-border-primary))] bg-white'
+                ? "border-[rgb(var(--color-brand-primary))] bg-[rgb(var(--color-brand-primary))]"
+                : "border-[rgb(var(--color-border-primary))] bg-white"
             }`}
           >
             {selected && (
@@ -229,7 +225,7 @@ export const PaymentMethod: React.FC<PaymentMethodProps> = ({
         </p>
       </div>
     </div>
-  )
-}
+  );
+};
 
-export default PaymentMethod
+export default PaymentMethod;
