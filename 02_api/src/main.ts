@@ -3,6 +3,20 @@ import { AppModule } from './app.module';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
-  await app.listen(process.env.PORT ?? 3000);
+
+  // Enable CORS for frontend
+  app.enableCors({
+    origin: process.env.FRONTEND_URL || 'http://localhost:3000',
+    credentials: true,
+  });
+
+  // API prefix
+  app.setGlobalPrefix('api');
+
+  const port = process.env.PORT ?? 3001;
+  await app.listen(port);
+
+  console.log(`🚀 ShareTrust API is running on: http://localhost:${port}`);
+  console.log(`📡 API endpoints: http://localhost:${port}/api`);
 }
 bootstrap();
