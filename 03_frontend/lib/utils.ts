@@ -89,6 +89,30 @@ export function deepClone<T>(obj: T): T {
   return JSON.parse(JSON.stringify(obj))
 }
 
+// Alias for formatCurrency for compatibility
+export const formatPrice = formatCurrency
+
+// Get category icon based on category name
+export function getCategoryIcon(category: string): string {
+  const icons = {
+    streaming: '🎬',
+    'ai-tools': '🧠',
+    gaming: '🎮',
+    software: '💼',
+    music: '🎵',
+    news: '📰',
+    education: '📚',
+    fitness: '💪',
+    food: '🍔',
+    travel: '✈️',
+    other: '📦'
+  }
+  return icons[category as keyof typeof icons] || icons.other
+}
+
+// Alias for getEscrowStatusColor for compatibility
+export const getStatusColor = getEscrowStatusColor
+
 // Debounce function
 export function debounce<T extends (...args: any[]) => void>(
   func: T,
