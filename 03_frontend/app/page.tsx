@@ -1,14 +1,32 @@
 "use client";
 
 import Image from "next/image";
+import Link from "next/link";
+import { useRouter } from "next/navigation";
+import { useEffect } from "react";
 import { useAuth } from "../contexts/AuthContext";
 import LoginButton from "../components/LoginButton";
 import LoadingSpinner from "../components/LoadingSpinner";
 import TrustBadge from "../components/TrustBadge";
 import { LiffDebug } from "../components/LiffDebug";
+import UserProfile from "../components/UserProfile";
+import { AuthTest } from "../components/AuthTest";
 
 export default function Home() {
   const { user, profile, loading, initialized } = useAuth();
+  const router = useRouter();
+
+  // Auto-redirect to profile page when authenticated
+  useEffect(() => {
+    if (initialized && !loading && user && profile) {
+      // Delay redirect to show welcome message briefly
+      const timer = setTimeout(() => {
+        router.push('/profile');
+      }, 2000);
+
+      return () => clearTimeout(timer);
+    }
+  }, [user, profile, loading, initialized, router]);
 
   if (!initialized || loading) {
     return (
@@ -123,110 +141,68 @@ export default function Home() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50">
-      <header className="bg-white shadow-sm border-b">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex justify-between items-center py-4">
-            <div className="flex items-center space-x-4">
-              <h1 className="text-2xl font-bold text-gray-900">ShareTrust</h1>
+    <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 flex flex-col items-center justify-center px-4">
+      <div className="text-center mb-8">
+        <div className="inline-flex items-center justify-center w-16 h-16 bg-green-100 rounded-full mb-4">
+          <svg
+            className="w-8 h-8 text-green-600"
+            fill="currentColor"
+            viewBox="0 0 24 24"
+          >
+            <path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z" />
+          </svg>
+        </div>
+        <h1 className="text-3xl font-bold text-gray-900 mb-2">
+          Welcome Back!
+        </h1>
+        <p className="text-gray-600 mb-8">Redirecting to your profile...</p>
+
+        <div className="flex justify-center">
+          <Link
+            href="/profile"
+            className="px-6 py-3 bg-blue-600 text-white font-medium rounded-lg hover:bg-blue-700 transition-colors inline-flex items-center space-x-2"
+          >
+            <span>Go to Profile</span>
+            <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+              <path
+                fillRule="evenodd"
+                d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z"
+                clipRule="evenodd"
+              />
+            </svg>
+          </Link>
+        </div>
+      </div>
+
+      {/* Development Test Panel */}
+      {process.env.NODE_ENV === "development" && (
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+          <div className="bg-white rounded-xl shadow-lg border border-gray-200 p-6">
+            <div className="flex items-center justify-between mb-4">
+              <h3 className="text-lg font-semibold text-gray-900">
+                🧪 Authentication Testing
+              </h3>
+              <Link
+                href="/test"
+                className="px-3 py-1.5 text-sm font-medium text-white bg-blue-600 rounded-md hover:bg-blue-700 transition-colors"
+              >
+                Open Test Suite
+              </Link>
             </div>
-            <div className="flex items-center space-x-4">
-              {profile && (
-                <div className="flex items-center space-x-3">
-                  <TrustBadge
-                    trustLevel={profile.trust_level}
-                    trustScore={profile.trust_score}
-                    isVerified={profile.is_verified}
-                  />
-                  <div className="flex items-center space-x-2">
-                    {profile.avatar_url && (
-                      <Image
-                        src={profile.avatar_url}
-                        alt={profile.display_name || "User"}
-                        width={32}
-                        height={32}
-                        className="w-8 h-8 rounded-full"
-                      />
-                    )}
-                    <span className="text-sm font-medium text-gray-700">
-                      {profile.display_name || "User"}
-                    </span>
-                  </div>
-                </div>
-              )}
-            </div>
+
+            <AuthTest
+              variant="compact"
+              className="w-full"
+              onComplete={(result) => {
+                console.log('Test completed:', result)
+              }}
+              onError={(error) => {
+                console.error('Test error:', error)
+              }}
+            />
           </div>
         </div>
-      </header>
-
-      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        {/* Development Debug Panel - Only show in development */}
-        {process.env.NODE_ENV === "development" && <LiffDebug />}
-
-        <div className="mb-8">
-          <h2 className="text-3xl font-bold text-gray-900 mb-2">
-            ยินดีต้อนรับสู่ ShareTrust!
-          </h2>
-          <p className="text-gray-600">
-            แพลตฟอร์มสำหรับแชร์บัญชีและค่า subscription อย่างปลอดภัย
-          </p>
-        </div>
-
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
-          <div className="bg-white rounded-lg shadow p-6">
-            <div className="flex items-center space-x-3 mb-4">
-              <div className="p-2 bg-red-100 rounded-lg">
-                <span className="text-2xl">🎬</span>
-              </div>
-              <h3 className="font-semibold text-gray-900">Streaming</h3>
-            </div>
-            <p className="text-gray-600 text-sm">Netflix, Disney+, และอื่นๆ</p>
-          </div>
-
-          <div className="bg-white rounded-lg shadow p-6">
-            <div className="flex items-center space-x-3 mb-4">
-              <div className="p-2 bg-blue-100 rounded-lg">
-                <span className="text-2xl">🧠</span>
-              </div>
-              <h3 className="font-semibold text-gray-900">AI Tools</h3>
-            </div>
-            <p className="text-gray-600 text-sm">
-              ChatGPT, Midjourney, และอื่นๆ
-            </p>
-          </div>
-
-          <div className="bg-white rounded-lg shadow p-6">
-            <div className="flex items-center space-x-3 mb-4">
-              <div className="p-2 bg-green-100 rounded-lg">
-                <span className="text-2xl">🎮</span>
-              </div>
-              <h3 className="font-semibold text-gray-900">Gaming</h3>
-            </div>
-            <p className="text-gray-600 text-sm">
-              Game passes, Gaming platforms
-            </p>
-          </div>
-
-          <div className="bg-white rounded-lg shadow p-6">
-            <div className="flex items-center space-x-3 mb-4">
-              <div className="p-2 bg-purple-100 rounded-lg">
-                <span className="text-2xl">💼</span>
-              </div>
-              <h3 className="font-semibold text-gray-900">Software</h3>
-            </div>
-            <p className="text-gray-600 text-sm">Adobe, Microsoft, และอื่นๆ</p>
-          </div>
-        </div>
-
-        <div className="bg-blue-50 rounded-lg p-6">
-          <h3 className="text-lg font-semibold text-gray-900 mb-2">
-            ยังไม่พร้อมใช้งาน
-          </h3>
-          <p className="text-gray-600">
-            ระบบยังอยู่ในระหว่างการพัฒนา เราจะประกาศเมื่อพร้อมเปิดให้บริการจริง
-          </p>
-        </div>
-      </main>
+      )}
     </div>
   );
 }

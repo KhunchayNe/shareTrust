@@ -37,7 +37,7 @@ export default function TrustBadge({
   return (
     <div className="flex items-center space-x-2">
       {isVerified && (
-        <div className="flex items-center space-x-1 bg-green-50 border border-green-200 rounded-full px-2 py-1">
+        <div data-testid="verified-badge" className="flex items-center space-x-1 bg-green-50 border border-green-200 rounded-full px-2 py-1">
           <svg
             className={`w-3 h-3 text-green-600 ${size === "sm" ? "w-2 h-2" : "w-3 h-3"}`}
             fill="currentColor"
@@ -58,6 +58,7 @@ export default function TrustBadge({
       )}
 
       <div
+        data-testid="trust-level"
         className={`inline-flex items-center space-x-1 border rounded-full ${sizeClasses[size]} ${trustColors[trustLevel as keyof typeof trustColors]}`}
       >
         <div className="flex items-center space-x-1">
@@ -75,7 +76,7 @@ export default function TrustBadge({
           </span>
         </div>
 
-        {showScore && <span className="opacity-75">({trustScore})</span>}
+        {showScore && <span data-testid="trust-score" className="opacity-75">({trustScore})</span>}
       </div>
     </div>
   );

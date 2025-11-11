@@ -341,3 +341,6 @@ src/
 - Optimized indexes for frequent queries
 - Efficient RLS policy implementations
 - Query result caching where appropriate
+
+- use context7
+- after write or fix debug test with mcp playwrite
