@@ -1,0 +1,5 @@
+#ignore claude folder
+.claude/
+.claude-*/
+.env
+!.env.example
