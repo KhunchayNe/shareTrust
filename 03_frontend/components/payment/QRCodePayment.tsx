@@ -1,0 +1,237 @@
+import React, { useState, useEffect } from 'react'
+import { Card, CardBody, CardHeader } from '@/components/ui/Card'
+import { Button } from '@/components/ui/Button'
+import { Badge } from '@/components/ui/Badge'
+import { formatCurrency, generatePaymentReference } from '@/lib/utils'
+
+interface QRCodePaymentProps {
+  amount: number
+  currency?: string
+  merchantName?: string
+  reference?: string
+  onPaymentComplete?: (reference: string) => void
+  onExpire?: () => void
+  expiresInSeconds?: number
+  className?: string
+}
+
+export const QRCodePayment: React.FC<QRCodePaymentProps> = ({
+  amount,
+  currency = 'THB',
+  merchantName = 'ShareTrust',
+  reference = generatePaymentReference(),
+  onPaymentComplete,
+  onExpire,
+  expiresInSeconds = 900, // 15 minutes default
+  className
+}) => {
+  const [timeRemaining, setTimeRemaining] = useState(expiresInSeconds)
+  const [expired, setExpired] = useState(false)
+  const [copiedReference, setCopiedReference] = useState(false)
+
+  useEffect(() => {
+    if (timeRemaining <= 0 && !expired) {
+      setExpired(true)
+      onExpire?.()
+      return
+    }
+
+    const timer = setInterval(() => {
+      setTimeRemaining(prev => Math.max(0, prev - 1))
+    }, 1000)
+
+    return () => clearInterval(timer)
+  }, [timeRemaining, expired, onExpire])
+
+  const formatTime = (seconds: number): string => {
+    const minutes = Math.floor(seconds / 60)
+    const remainingSeconds = seconds % 60
+    return `${minutes}:${remainingSeconds.toString().padStart(2, '0')}`
+  }
+
+  const copyReference = async () => {
+    try {
+      await navigator.clipboard.writeText(reference)
+      setCopiedReference(true)
+      setTimeout(() => setCopiedReference(false), 2000)
+    } catch (error) {
+      console.error('Failed to copy reference:', error)
+    }
+  }
+
+  const generatePromptPayQR = () => {
+    // This is a simulated QR code for demo purposes
+    // In production, this would generate a real PromptPay QR code
+    const qrData = `00020101021229370016A00000067701011101130066${merchantName.replace(/\s+/g, '').toUpperCase()}520450005303764540${amount}5802TH53037646204${reference}6304`
+
+    // Return a placeholder data URL - in production, use a QR code library
+    return `data:image/svg+xml;base64,${btoa(`
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200" width="200" height="200">
+        <rect width="200" height="200" fill="white"/>
+        <rect x="20" y="20" width="160" height="160" fill="none" stroke="black" stroke-width="2"/>
+        <rect x="30" y="30" width="60" height="60" fill="black"/>
+        <rect x="40" y="40" width="40" height="40" fill="white"/>
+        <rect x="50" y="50" width="20" height="20" fill="black"/>
+        <rect x="110" y="30" width="60" height="60" fill="black"/>
+        <rect x="120" y="40" width="40" height="40" fill="white"/>
+        <rect x="130" y="50" width="20" height="20" fill="black"/>
+        <rect x="30" y="110" width="60" height="60" fill="black"/>
+        <rect x="40" y="120" width="40" height="40" fill="white"/>
+        <rect x="50" y="130" width="20" height="20" fill="black"/>
+        <text x="100" y="105" text-anchor="middle" font-size="8" fill="black">${reference}</text>
+      </svg>
+    `)}`
+  }
+
+  const isExpiringSoon = timeRemaining <= 60 && timeRemaining > 0
+
+  return (
+    <Card className={className}>
+      <CardHeader>
+        <div className="text-center">
+          <h3 className="text-lg font-semibold text-[rgb(var(--color-text-primary))] mb-1">
+            Scan to Pay
+          </h3>
+          <p className="text-sm text-[rgb(var(--color-text-secondary))]">
+            Scan this QR code with your banking app
+          </p>
+        </div>
+      </CardHeader>
+
+      <CardBody className="space-y-4">
+        {/* QR Code */}
+        <div className="flex justify-center">
+          <div className={`relative p-4 bg-white rounded-lg border-2 ${
+            expired
+              ? 'border-[rgb(var(--color-danger))] opacity-50'
+              : isExpiringSoon
+                ? 'border-[rgb(var(--color-warning))] animate-pulse'
+                : 'border-[rgb(var(--color-border-primary))]'
+          }`}>
+            {/* QR Code Placeholder */}
+            <div className="w-48 h-48 bg-[rgb(var(--color-bg-secondary))] rounded-lg flex items-center justify-center">
+              <div className="text-center">
+                <svg
+                  className="w-32 h-32 mx-auto mb-2"
+                  viewBox="0 0 200 200"
+                  fill="currentColor"
+                >
+                  {/* QR Code pattern - simplified for demo */}
+                  <rect x="20" y="20" width="40" height="40" />
+                  <rect x="25" y="25" width="30" height="30" fill="white" />
+                  <rect x="30" y="30" width="20" height="20" />
+
+                  <rect x="140" y="20" width="40" height="40" />
+                  <rect x="145" y="25" width="30" height="30" fill="white" />
+                  <rect x="150" y="30" width="20" height="20" />
+
+                  <rect x="20" y="140" width="40" height="40" />
+                  <rect x="25" y="145" width="30" height="30" fill="white" />
+                  <rect x="30" y="150" width="20" height="20" />
+
+                  {/* Data area */}
+                  <rect x="70" y="70" width="60" height="60" />
+                  <rect x="80" y="80" width="40" height="40" fill="white" />
+                  <rect x="90" y="90" width="20" height="20" />
+                </svg>
+                <p className="text-xs text-[rgb(var(--color-text-secondary))] font-mono">
+                  {reference}
+                </p>
+              </div>
+            </div>
+
+            {/* Expired Overlay */}
+            {expired && (
+              <div className="absolute inset-0 bg-black/70 rounded-lg flex items-center justify-center">
+                <div className="text-center">
+                  <p className="text-white font-semibold">QR Code Expired</p>
+                  <Button
+                    onClick={() => window.location.reload()}
+                    size="sm"
+                    className="mt-2"
+                  >
+                    Generate New
+                  </Button>
+                </div>
+              </div>
+            )}
+          </div>
+        </div>
+
+        {/* Payment Details */}
+        <div className="text-center space-y-2">
+          <div className="text-2xl font-bold text-[rgb(var(--color-text-primary))]">
+            {formatCurrency(amount, currency)}
+          </div>
+          <div className="text-sm text-[rgb(var(--color-text-secondary))]">
+            {merchantName}
+          </div>
+        </div>
+
+        {/* Reference Number */}
+        <div className="p-3 bg-[rgb(var(--color-bg-secondary))] rounded-lg">
+          <div className="flex items-center justify-between mb-1">
+            <span className="text-sm font-medium text-[rgb(var(--color-text-secondary))]">
+              Reference Number
+            </span>
+            <Button
+              onClick={copyReference}
+              variant="ghost"
+              size="xs"
+              className="h-6 px-2"
+            >
+              {copiedReference ? '✓ Copied' : '📋 Copy'}
+            </Button>
+          </div>
+          <code className="text-sm font-mono text-[rgb(var(--color-text-primary))] break-all">
+            {reference}
+          </code>
+        </div>
+
+        {/* Timer */}
+        <div className="flex items-center justify-center">
+          <Badge
+            variant={expired ? 'danger' : isExpiringSoon ? 'warning' : 'default'}
+            size="sm"
+            className="px-3 py-1"
+          >
+            {expired ? '⏰ Expired' : `⏱️ ${formatTime(timeRemaining)}`}
+          </Badge>
+        </div>
+
+        {/* Instructions */}
+        <div className="space-y-2 text-sm text-[rgb(var(--color-text-secondary))]">
+          <p className="font-medium text-[rgb(var(--color-text-primary))]">How to pay:</p>
+          <ol className="space-y-1 text-xs">
+            <li>1. Open your mobile banking app</li>
+            <li>2. Select "Scan QR" or "Pay with QR"</li>
+            <li>3. Scan the QR code above</li>
+            <li>4. Confirm the payment details</li>
+            <li>5. Complete the payment</li>
+          </ol>
+        </div>
+
+        {/* Action Buttons */}
+        <div className="flex space-x-2">
+          <Button
+            onClick={() => window.open(generatePromptPayQR(), '_blank')}
+            variant="outline"
+            size="sm"
+            className="flex-1"
+          >
+            📱 Open in Banking App
+          </Button>
+          <Button
+            onClick={copyReference}
+            variant="ghost"
+            size="sm"
+          >
+            📋 Copy Ref
+          </Button>
+        </div>
+      </CardBody>
+    </Card>
+  )
+}
+
+export default QRCodePayment

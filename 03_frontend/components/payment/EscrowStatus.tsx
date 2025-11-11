@@ -1,0 +1,248 @@
+import React from 'react'
+import { Badge } from '@/components/ui/Badge'
+import { Card, CardBody, CardHeader } from '@/components/ui/Card'
+import { getEscrowStatusColor, formatCurrency, calculateEscrowProgress } from '@/lib/utils'
+
+interface EscrowStatusProps {
+  status: 'pending' | 'funded' | 'released' | 'refunded'
+  currentMembers: number
+  requiredMembers: number
+  amount: number
+  currency?: string
+  expiresAt?: string
+  className?: string
+  variant?: 'default' | 'compact' | 'detailed'
+}
+
+export const EscrowStatus: React.FC<EscrowStatusProps> = ({
+  status,
+  currentMembers,
+  requiredMembers,
+  amount,
+  currency = 'THB',
+  expiresAt,
+  className,
+  variant = 'default'
+}) => {
+  const progress = calculateEscrowProgress(currentMembers, requiredMembers)
+  const statusColor = getEscrowStatusColor(status)
+
+  const getStatusIcon = (status: string) => {
+    switch (status) {
+      case 'pending':
+        return '⏳'
+      case 'funded':
+        return '💰'
+      case 'released':
+        return '✅'
+      case 'refunded':
+        return '↩️'
+      default:
+        return '❓'
+    }
+  }
+
+  const getStatusText = (status: string) => {
+    switch (status) {
+      case 'pending':
+        return 'Waiting for members'
+      case 'funded':
+        return 'Fully funded'
+      case 'released':
+        return 'Payment released'
+      case 'refunded':
+        return 'Payment refunded'
+      default:
+        return 'Unknown status'
+    }
+  }
+
+  const getTimeRemaining = (expiresAt: string) => {
+    const now = new Date()
+    const expiry = new Date(expiresAt)
+    const diffInHours = Math.floor((expiry.getTime() - now.getTime()) / (1000 * 60 * 60))
+
+    if (diffInHours <= 0) return 'Expired'
+    if (diffInHours < 24) return `${diffInHours}h remaining`
+
+    const diffInDays = Math.floor(diffInHours / 24)
+    return `${diffInDays}d remaining`
+  }
+
+  if (variant === 'compact') {
+    return (
+      <div className={`inline-flex items-center space-x-2 p-2 rounded-lg bg-[rgb(var(--color-bg-secondary))] ${className}`}>
+        <span className="text-lg">{getStatusIcon(status)}</span>
+        <div className="flex-1">
+          <div className="flex items-center space-x-2">
+            <Badge status={status} size="xs">
+              {getStatusText(status)}
+            </Badge>
+            <span className="text-sm text-[rgb(var(--color-text-secondary))]">
+              {currentMembers}/{requiredMembers} members
+            </span>
+          </div>
+          {status === 'pending' && (
+            <div className="w-full h-1 bg-[rgb(var(--color-bg-primary))] rounded-full mt-1">
+              <div
+                className="h-full rounded-full transition-all duration-300"
+                style={{
+                  width: `${progress}%`,
+                  backgroundColor: statusColor
+                }}
+              />
+            </div>
+          )}
+        </div>
+      </div>
+    )
+  }
+
+  if (variant === 'detailed') {
+    return (
+      <Card className={className} variant="default">
+        <CardHeader>
+          <div className="flex items-center justify-between">
+            <div className="flex items-center space-x-2">
+              <span className="text-2xl">{getStatusIcon(status)}</span>
+              <div>
+                <h3 className="font-semibold text-[rgb(var(--color-text-primary))]">
+                  Escrow Status
+                </h3>
+                <p className="text-sm text-[rgb(var(--color-text-secondary))]">
+                  {getStatusText(status)}
+                </p>
+              </div>
+            </div>
+            <Badge status={status} size="md" className="px-3 py-1">
+              {status.toUpperCase()}
+            </Badge>
+          </div>
+        </CardHeader>
+
+        <CardBody className="space-y-4">
+          {/* Amount */}
+          <div className="flex items-center justify-between">
+            <span className="text-[rgb(var(--color-text-secondary))]">
+              Total Amount
+            </span>
+            <span className="font-semibold text-[rgb(var(--color-text-primary))]">
+              {formatCurrency(amount, currency)}
+            </span>
+          </div>
+
+          {/* Member Progress */}
+          <div>
+            <div className="flex items-center justify-between mb-2">
+              <span className="text-[rgb(var(--color-text-secondary))]">
+                Member Progress
+              </span>
+              <span className="text-sm font-medium text-[rgb(var(--color-text-primary))]">
+                {currentMembers}/{requiredMembers} members
+              </span>
+            </div>
+            <div className="w-full h-3 bg-[rgb(var(--color-bg-secondary))] rounded-full overflow-hidden">
+              <div
+                className="h-full transition-all duration-500 ease-out rounded-full"
+                style={{
+                  width: `${progress}%`,
+                  backgroundColor: statusColor
+                }}
+              />
+            </div>
+            <p className="text-xs text-[rgb(var(--color-text-tertiary))] mt-1">
+              {Math.round(progress)}% complete
+            </p>
+          </div>
+
+          {/* Time Remaining */}
+          {expiresAt && status === 'pending' && (
+            <div className="flex items-center justify-between">
+              <span className="text-[rgb(var(--color-text-secondary))]">
+                Time Remaining
+              </span>
+              <span className="text-sm font-medium text-[rgb(var(--color-warning))]">
+                {getTimeRemaining(expiresAt)}
+              </span>
+            </div>
+          )}
+
+          {/* Status-specific Messages */}
+          {status === 'pending' && (
+            <div className="p-3 bg-[rgb(var(--color-warning))]/10 border border-[rgb(var(--color-warning))]/20 rounded-lg">
+              <p className="text-sm text-[rgb(var(--color-warning))]">
+                ⏰ Waiting for {requiredMembers - currentMembers} more member(s) to join.
+                If the target isn't met by the deadline, all payments will be automatically refunded.
+              </p>
+            </div>
+          )}
+
+          {status === 'funded' && (
+            <div className="p-3 bg-[rgb(var(--color-info))]/10 border border-[rgb(var(--color-info))]/20 rounded-lg">
+              <p className="text-sm text-[rgb(var(--color-info))]">
+                🎉 All members have joined! The payment will be released to the group creator shortly.
+              </p>
+            </div>
+          )}
+
+          {status === 'released' && (
+            <div className="p-3 bg-[rgb(var(--color-success))]/10 border border-[rgb(var(--color-success))]/20 rounded-lg">
+              <p className="text-sm text-[rgb(var(--color-success))]">
+                ✅ Payment has been successfully released to the group creator.
+              </p>
+            </div>
+          )}
+
+          {status === 'refunded' && (
+            <div className="p-3 bg-[rgb(var(--color-danger))]/10 border border-[rgb(var(--color-danger))]/20 rounded-lg">
+              <p className="text-sm text-[rgb(var(--color-danger))]">
+                ↩️ Payment has been refunded to all members.
+              </p>
+            </div>
+          )}
+        </CardBody>
+      </Card>
+    )
+  }
+
+  return (
+    <div className={`p-4 rounded-xl border border-[rgb(var(--color-border-primary))] bg-white ${className}`}>
+      <div className="flex items-center space-x-3">
+        <span className="text-2xl">{getStatusIcon(status)}</span>
+        <div className="flex-1">
+          <div className="flex items-center space-x-2 mb-1">
+            <Badge status={status} size="sm">
+              {status}
+            </Badge>
+            <span className="text-sm font-medium text-[rgb(var(--color-text-primary))]">
+              {getStatusText(status)}
+            </span>
+          </div>
+
+          <div className="flex items-center justify-between text-sm">
+            <span className="text-[rgb(var(--color-text-secondary))]">
+              {currentMembers}/{requiredMembers} members
+            </span>
+            <span className="font-medium text-[rgb(var(--color-text-primary))]">
+              {formatCurrency(amount, currency)}
+            </span>
+          </div>
+
+          {status === 'pending' && (
+            <div className="w-full h-2 bg-[rgb(var(--color-bg-secondary))] rounded-full mt-2">
+              <div
+                className="h-full rounded-full transition-all duration-300"
+                style={{
+                  width: `${progress}%`,
+                  backgroundColor: statusColor
+                }}
+              />
+            </div>
+          )}
+        </div>
+      </div>
+    </div>
+  )
+}
+
+export default EscrowStatus
